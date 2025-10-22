@@ -43,6 +43,7 @@
 ### 🆕 **What's New in v1.1.1**
 - ✅ **Fixed Duration Calculation** - Log now shows actual session time instead of 00:00:00
 - ✅ **Fixed Start Hotkey** - Ctrl+Alt+F1 now works continuously with notes dialog
+- ✅ **Session Summary Popup** - Confirmation dialog shows session details when timer stops
 - 📊 **Portable Executable** - Single-file distribution with embedded dependencies
 - 📝 **Smart Logging** - Creates log file in same directory as executable
 - 🎯 **Reliable Hotkeys** - All hotkeys work consistently across applications

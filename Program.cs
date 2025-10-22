@@ -342,10 +342,29 @@ namespace Chronometre
             if (_timerService?.CurrentState == TimerState.Idle) return;
 
             _timerService?.Stop();
-            if (_logWriter != null && _timerService != null)
+            
+            // Get session data before writing to log
+            var sessionData = _timerService?.GetSessionData();
+            
+            if (_logWriter != null && _timerService != null && sessionData != null)
             {
                 System.Diagnostics.Debug.WriteLine("Writing session to log");
-                _logWriter.WriteSession(_timerService.GetSessionData());
+                _logWriter.WriteSession(sessionData);
+                
+                // Show confirmation popup with session summary
+                var duration = sessionData.Duration.ToString(@"hh\:mm\:ss");
+                var startTime = sessionData.StartTime.ToString("HH:mm:ss");
+                var endTime = sessionData.EndTime?.ToString("HH:mm:ss") ?? "N/A";
+                var notes = sessionData.Notes.Count > 0 ? string.Join(", ", sessionData.Notes) : "No notes";
+                
+                var message = $"Session Saved!\n\n" +
+                             $"Start Time: {startTime}\n" +
+                             $"End Time: {endTime}\n" +
+                             $"Duration: {duration}\n" +
+                             $"Notes: {notes}\n\n" +
+                             $"Log file: {_logWriter.LogFilePath}";
+                
+                MessageBox.Show(message, "Session Completed", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
