@@ -448,12 +448,20 @@ namespace Chronometre
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine($"[{timestamp}] No forms open, starting timer directly");
-                // Start timer directly without dialog when using hotkey
+                System.Diagnostics.Debug.WriteLine($"[{timestamp}] No forms open, showing start dialog");
+                // Show the start dialog for notes input when using hotkey
                 if (_timerService?.CurrentState == TimerState.Idle)
                 {
-                    _timerService.Start("Hotkey start");
-                    System.Diagnostics.Debug.WriteLine($"[{timestamp}] Timer started via hotkey");
+                    using var dialog = new StartDialog();
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        _timerService.Start(dialog.Notes);
+                        System.Diagnostics.Debug.WriteLine($"[{timestamp}] Timer started via hotkey with notes: {dialog.Notes}");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[{timestamp}] Timer start cancelled by user");
+                    }
                 }
                 else
                 {
