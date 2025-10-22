@@ -1,11 +1,23 @@
-# Chronomètre - Time Tracker
+# ⏱️ Chronomètre - Professional Time Tracker
 
-A simple, efficient time tracking application with global hotkeys for Windows.
+> **The ultimate time tracking solution for Windows developers and professionals**
 
-![Chronomètre](https://img.shields.io/badge/Version-1.1.0.0-blue)
-![.NET](https://img.shields.io/badge/.NET-8.0-purple)
-![Platform](https://img.shields.io/badge/Platform-Windows-green)
-![License](https://img.shields.io/badge/License-MIT-yellow)
+![Version](https://img.shields.io/badge/Version-1.1.0.0-blue?style=for-the-badge&logo=windows)
+![.NET](https://img.shields.io/badge/.NET-8.0-purple?style=for-the-badge&logo=dotnet)
+![Platform](https://img.shields.io/badge/Platform-Windows-green?style=for-the-badge&logo=windows)
+![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge&logo=opensourceinitiative)
+![Downloads](https://img.shields.io/badge/Downloads-Ready-brightgreen?style=for-the-badge)
+
+**Chronomètre** is a powerful, lightweight time tracking application designed for Windows users who need reliable time tracking with global hotkeys. Whether you're a developer, freelancer, or professional, Chronomètre provides the perfect solution for tracking your work sessions efficiently.
+
+## 🎯 **Why Choose Chronomètre?**
+
+- ⚡ **Lightning Fast** - Start tracking in seconds with global hotkeys
+- 🎯 **Always Available** - Works from any application, anywhere
+- 📊 **Smart Logging** - Automatic time tracking with intelligent file placement
+- 🖥️ **Minimal Footprint** - Runs quietly in the system tray
+- 🔧 **Professional Installation** - Proper Windows integration with uninstaller
+- 🚀 **Zero Configuration** - Works out of the box with sensible defaults
 
 ## 🚀 Features
 
@@ -26,14 +38,32 @@ A simple, efficient time tracking application with global hotkeys for Windows.
 | `Ctrl+Alt+F4` | Show Overlay |
 | `Ctrl+Alt+F5` | Hide Overlay |
 
-## 📦 Installation
+## 🎉 **Latest Release: v1.1.0**
 
-### Quick Install (Recommended)
+### 🆕 **What's New in v1.1.0**
+- ✨ **Professional Windows Installer** - Easy installation with proper Windows integration
+- 🎯 **System Tray Integration** - Minimal desktop footprint with full functionality  
+- ⌨️ **Reliable Global Hotkeys** - Fixed "hotkeys only work once" issue
+- 📊 **Smart Logging System** - Automatic path selection (Desktop → Documents → AppData)
+- 🖼️ **Embedded Resources** - Icon and resources properly embedded
+- 🛡️ **Enhanced Error Handling** - Comprehensive error management and user feedback
+- 🚀 **Single Instance Protection** - Prevents multiple instances from running
 
-1. **Download the latest release** from [GitHub Releases](https://github.com/yourusername/chronometre/releases)
-2. **Extract the installer files** to a folder
-3. **Right-click `install.bat`** and select "Run as administrator"
-4. **Follow the installation prompts**
+### 📦 **Download & Install**
+
+#### **🚀 Quick Installation (Recommended)**
+1. **Download** the latest release: `Chronometre-v1.1.0-Windows-x64.zip`
+2. **Extract** the ZIP file to a folder
+3. **Right-click** `install.bat` and select **"Run as administrator"**
+4. **Follow** the installation prompts
+5. **Launch** from desktop shortcut or Start Menu
+
+#### **📋 System Requirements**
+- **OS**: Windows 10 or later
+- **Architecture**: x64
+- **Runtime**: .NET 8.0 (included in installer)
+- **Memory**: 50MB RAM
+- **Disk Space**: 100MB
 
 ### What Gets Installed
 
