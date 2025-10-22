@@ -80,19 +80,28 @@ Write-Host ""
 Write-Host "Build completed successfully!" -ForegroundColor Green
 Write-Host ""
 
-# Show output location
-$outputPath = "bin\$Configuration\net8.0-windows\$Runtime\publish"
-$exePath = Join-Path $outputPath "Chronometre.exe"
+# Create portable version
+Write-Host "Creating portable version..." -ForegroundColor Yellow
+$portableDir = "publish-portable"
+if (Test-Path $portableDir) {
+    Remove-Item $portableDir -Recurse -Force
+}
+New-Item -ItemType Directory -Path $portableDir | Out-Null
 
-if (Test-Path $exePath) {
-    $fileInfo = Get-Item $exePath
-    Write-Host "Output: $exePath" -ForegroundColor Cyan
+# Copy only the executable
+$sourceExe = "bin\$Configuration\net8.0-windows\$Runtime\publish\Chronometre.exe"
+$destExe = Join-Path $portableDir "Chronometre.exe"
+
+if (Test-Path $sourceExe) {
+    Copy-Item $sourceExe $destExe
+    $fileInfo = Get-Item $destExe
+    Write-Host "Portable executable created: $destExe" -ForegroundColor Cyan
     Write-Host "Size: $([math]::Round($fileInfo.Length / 1MB, 2)) MB" -ForegroundColor Cyan
     Write-Host "Modified: $($fileInfo.LastWriteTime)" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "You can now run the application from the publish folder." -ForegroundColor Green
+    Write-Host "✅ Portable version ready! Single executable with embedded icon and all dependencies." -ForegroundColor Green
 } else {
-    Write-Host "Warning: Executable not found at expected location." -ForegroundColor Yellow
+    Write-Host "Warning: Source executable not found at $sourceExe" -ForegroundColor Yellow
 }
 
 Write-Host ""

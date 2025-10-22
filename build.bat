@@ -97,17 +97,22 @@ echo.
 echo Build completed successfully!
 echo.
 
-REM Show output location
-set OUTPUT_PATH=bin\%CONFIGURATION%\net8.0-windows\%RUNTIME%\publish
-set EXE_PATH=%OUTPUT_PATH%\Chronometre.exe
+REM Create portable version
+echo Creating portable version...
+if exist "publish-portable" rmdir /s /q "publish-portable"
+mkdir "publish-portable"
 
-if exist "%EXE_PATH%" (
-    echo Output: %EXE_PATH%
-    for %%F in ("%EXE_PATH%") do echo Size: %%~zF bytes
+set SOURCE_EXE=bin\%CONFIGURATION%\net8.0-windows\%RUNTIME%\publish\Chronometre.exe
+set DEST_EXE=publish-portable\Chronometre.exe
+
+if exist "%SOURCE_EXE%" (
+    copy "%SOURCE_EXE%" "%DEST_EXE%" >nul
+    echo Portable executable created: %DEST_EXE%
+    for %%F in ("%DEST_EXE%") do echo Size: %%~zF bytes
     echo.
-    echo You can now run the application from the publish folder.
+    echo ✅ Portable version ready! Single executable with embedded icon and all dependencies.
 ) else (
-    echo Warning: Executable not found at expected location.
+    echo Warning: Source executable not found at %SOURCE_EXE%
 )
 
 echo.

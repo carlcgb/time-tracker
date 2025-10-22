@@ -11,8 +11,8 @@
     <AssemblyCompany>Dev-NTIC</AssemblyCompany>
     <AssemblyProduct>Chronomètre</AssemblyProduct>
     <AssemblyCopyright>Copyright © 2025</AssemblyCopyright>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
@@ -30,9 +30,6 @@
 
   <ItemGroup>
     <EmbeddedResource Include="timer-icon.ico" />
-    <Content Include="timer-icon.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
 
