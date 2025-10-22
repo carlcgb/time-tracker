@@ -392,3 +392,7 @@ FodyWeavers.xsd
 *.exe
 *.dll
 *.pdb
+
+# Chronomètre log files
+Chrono-log.txt
+portable/Chrono-log.txt
