@@ -38,40 +38,40 @@
 | `Ctrl+Alt+F4` | Show Overlay |
 | `Ctrl+Alt+F5` | Hide Overlay |
 
-## 🎉 **Latest Release: v1.1.0**
+## 🎉 **Latest Release: v1.1.1**
 
-### 🆕 **What's New in v1.1.0**
-- ✨ **Professional Windows Installer** - Easy installation with proper Windows integration
-- 🎯 **System Tray Integration** - Minimal desktop footprint with full functionality  
-- ⌨️ **Reliable Global Hotkeys** - Fixed "hotkeys only work once" issue
-- 📊 **Smart Logging System** - Automatic path selection (Desktop → Documents → AppData)
+### 🆕 **What's New in v1.1.1**
+- ✅ **Fixed Duration Calculation** - Log now shows actual session time instead of 00:00:00
+- ✅ **Fixed Start Hotkey** - Ctrl+Alt+F1 now works continuously with notes dialog
+- 📊 **Portable Executable** - Single-file distribution with embedded dependencies
+- 📝 **Smart Logging** - Creates log file in same directory as executable
+- 🎯 **Reliable Hotkeys** - All hotkeys work consistently across applications
 - 🖼️ **Embedded Resources** - Icon and resources properly embedded
 - 🛡️ **Enhanced Error Handling** - Comprehensive error management and user feedback
 - 🚀 **Single Instance Protection** - Prevents multiple instances from running
 
 ### 📦 **Download & Install**
 
-#### **🚀 Quick Installation (Recommended)**
-1. **Download** the latest release: `Chronometre-v1.1.0-Windows-x64.zip`
-2. **Extract** the ZIP file to a folder
-3. **Right-click** `install.bat` and select **"Run as administrator"**
-4. **Follow** the installation prompts
-5. **Launch** from desktop shortcut or Start Menu
+#### **🚀 Portable Version (Recommended)**
+1. **Download** the latest release: `Chronometre-v1.1.1-Portable.zip`
+2. **Extract** the ZIP file to any folder
+3. **Run** `Chronometre.exe` directly
+4. **Log file** will be created automatically in the same folder
+5. **No installation required** - just copy and run!
 
 #### **📋 System Requirements**
 - **OS**: Windows 10 or later
 - **Architecture**: x64
-- **Runtime**: .NET 8.0 (included in installer)
+- **Runtime**: .NET 8.0 (included in portable version)
 - **Memory**: 50MB RAM
 - **Disk Space**: 100MB
 
-### What Gets Installed
+### What's Included
 
-- Application files to `C:\Program Files\Chronometre\`
-- Desktop shortcut for easy access
-- Start Menu shortcut
-- Uninstaller in Add/Remove Programs
-- Proper Windows integration
+- **Single Executable**: `Chronometre.exe` with all dependencies
+- **Automatic Logging**: Creates `Chrono-log.txt` in same directory
+- **No Installation**: Copy to any folder and run
+- **Portable**: Works from USB drives, network shares, etc.
 
 ## 🎯 Usage
 
