@@ -38,11 +38,12 @@
 | `Ctrl+Alt+F4` | Show Overlay |
 | `Ctrl+Alt+F5` | Hide Overlay |
 
-## 🎉 **Latest Release: v1.1.1**
+## 🎉 **Latest Release: v1.1.2**
 
-### 🆕 **What's New in v1.1.1**
+### 🆕 **What's New in v1.1.2**
 - ✅ **Fixed Duration Calculation** - Log now shows actual session time instead of 00:00:00
 - ✅ **Fixed Start Hotkey** - Ctrl+Alt+F1 now works continuously with notes dialog
+- ✅ **Fixed Overlay Hotkeys** - Ctrl+Alt+F4 and F5 now work properly when timer is active
 - ✅ **Session Summary Popup** - Confirmation dialog shows session details when timer stops
 - 📊 **Portable Executable** - Single-file distribution with embedded dependencies
 - 📝 **Smart Logging** - Creates log file in same directory as executable
@@ -54,7 +55,7 @@
 ### 📦 **Download & Install**
 
 #### **🚀 Portable Version (Recommended)**
-1. **Download** the latest release: `Chronometre-v1.1.1-Portable.zip`
+1. **Download** the latest release: `Chronometre-v1.1.2-Portable.zip`
 2. **Extract** the ZIP file to any folder
 3. **Run** `Chronometre.exe` directly
 4. **Log file** will be created automatically in the same folder
