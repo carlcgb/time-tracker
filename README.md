@@ -207,8 +207,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Global hotkey implementation using Windows API
 - System tray integration for minimal footprint
 
----
+- Built with .NET 8 and Windows Forms
+- Icons from System.Drawing.SystemIcons
+- Global hotkey implementation using Windows API
 
-**Chronomètre** - Simple, efficient time tracking for Windows developers and professionals.
-
-*Made with ❤️ by Dev-NTIC_CGB*
+With ❤️ from CGB
