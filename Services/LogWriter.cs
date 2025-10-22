@@ -48,41 +48,12 @@ namespace Chronometre.Services
                 return fullPath;
             }
 
-            // Try Desktop first, but fallback to user-accessible locations
-            var desktopPath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                "Chrono-log.txt"
-            );
-
-            System.Diagnostics.Debug.WriteLine($"Testing desktop path: {desktopPath}");
-            if (CanWriteToPath(desktopPath))
-            {
-                System.Diagnostics.Debug.WriteLine($"Using desktop path: {desktopPath}");
-                return desktopPath;
-            }
-
-            // Fallback to Documents folder (more accessible)
-            var documentsPath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                "Chrono-log.txt"
-            );
-
-            System.Diagnostics.Debug.WriteLine($"Testing documents path: {documentsPath}");
-            if (CanWriteToPath(documentsPath))
-            {
-                System.Diagnostics.Debug.WriteLine($"Using documents path: {documentsPath}");
-                return documentsPath;
-            }
-
-            // Final fallback to AppData (always accessible)
-            var appDataPath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "Chronometre",
-                "Chrono-log.txt"
-            );
-
-            System.Diagnostics.Debug.WriteLine($"Using AppData fallback path: {appDataPath}");
-            return appDataPath;
+            // Create log file in the same directory as the executable
+            var executableDirectory = AppContext.BaseDirectory;
+            var logPath = Path.Combine(executableDirectory, "Chrono-log.txt");
+            
+            System.Diagnostics.Debug.WriteLine($"Using executable directory path: {logPath}");
+            return logPath;
         }
 
         private bool CanWriteToPath(string path)
