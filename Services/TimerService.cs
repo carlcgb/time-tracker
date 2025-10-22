@@ -119,7 +119,16 @@ namespace Chronometre.Services
         private TimeSpan CalculateElapsedTime()
         {
             if (_currentState == TimerState.Idle)
+            {
+                // If idle, calculate the final duration from start to end time
+                if (_startTime != DateTime.MinValue)
+                {
+                    var endTime = DateTime.Now;
+                    var finalElapsed = endTime - _startTime - _pausedDuration;
+                    return finalElapsed < TimeSpan.Zero ? TimeSpan.Zero : finalElapsed;
+                }
                 return TimeSpan.Zero;
+            }
 
             var now = DateTime.Now;
             var totalElapsed = now - _startTime - _pausedDuration;

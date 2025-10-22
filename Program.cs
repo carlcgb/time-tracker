@@ -448,8 +448,17 @@ namespace Chronometre
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine($"[{timestamp}] No forms open, calling OnStartClicked");
-                OnStartClicked(null, EventArgs.Empty);
+                System.Diagnostics.Debug.WriteLine($"[{timestamp}] No forms open, starting timer directly");
+                // Start timer directly without dialog when using hotkey
+                if (_timerService?.CurrentState == TimerState.Idle)
+                {
+                    _timerService.Start("Hotkey start");
+                    System.Diagnostics.Debug.WriteLine($"[{timestamp}] Timer started via hotkey");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"[{timestamp}] Timer not in idle state: {_timerService?.CurrentState}");
+                }
             }
             System.Diagnostics.Debug.WriteLine($"[{timestamp}] === OnStartHotkey completed ===");
         }
