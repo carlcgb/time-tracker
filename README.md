@@ -214,3 +214,5 @@ If you encounter any issues or have questions:
 - Built with .NET 8 and Windows Forms
 - Icons from System.Drawing.SystemIcons
 - Global hotkey implementation using Windows API
+
+With ❤️ from CGB
