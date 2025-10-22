@@ -3,25 +3,19 @@ echo Chronometre Installer
 echo ====================
 echo.
 
-REM Check if running as administrator
-net session >nul 2>&1
+REM Check if PowerShell is available
+powershell -Command "Get-Host" >nul 2>&1
 if %errorLevel% == 0 (
-    echo Running as administrator...
+    echo Running PowerShell installer...
+    echo.
+    powershell.exe -ExecutionPolicy Bypass -File "%~dp0install.ps1" %*
 ) else (
-    echo This installer requires administrator privileges.
-    echo Please run this file as administrator.
+    echo PowerShell not available. Please use install.ps1 directly.
+    echo.
     pause
     exit /b 1
 )
 
 echo.
-echo Installing Chronometre...
-echo.
-
-REM Run the PowerShell installer
-powershell.exe -ExecutionPolicy Bypass -File "%~dp0install.ps1"
-
-echo.
-echo Installation complete!
-echo.
+echo Installation completed!
 pause
