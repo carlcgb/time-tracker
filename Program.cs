@@ -13,7 +13,7 @@ namespace Chronometre
         private static Mutex? _mutex;
         private static NotifyIcon? _trayIcon;
         private static TimerService? _timerService;
-        private static GlobalHotkeyManager? _hotkeyManager;
+        private static ReliableHotkeyManager? _hotkeyManager;
         private static LogWriter? _logWriter;
         private static Settings? _settings;
         private static ApplicationContext? _applicationContext;
@@ -54,18 +54,8 @@ namespace Chronometre
 
             // Initialize services
             _timerService = new TimerService();
-            System.Diagnostics.Debug.WriteLine("Creating LogWriter...");
-            try
-            {
-                _logWriter = new LogWriter(); // Let LogWriter determine the best path
-                System.Diagnostics.Debug.WriteLine($"LogWriter created successfully. Path: {_logWriter.LogFilePath}");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error creating LogWriter: {ex.Message}");
-                _logWriter = null;
-            }
-            _hotkeyManager = new GlobalHotkeyManager();
+            _logWriter = new LogWriter();
+            _hotkeyManager = new ReliableHotkeyManager();
 
             // Initialize overlay
             _overlay = new OverlayIndicatorForm();
@@ -91,29 +81,53 @@ namespace Chronometre
         {
             try
             {
-                // Try to load the custom icon, fallback to system icon if it fails
+                // Use system icon for now to avoid embedded resource issues
                 Icon? customIcon = null;
                 try
                 {
-                    var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "timer-icon.ico");
-                    if (File.Exists(iconPath))
+                    // Try to load from embedded resources
+                    var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                    var resourceName = "Chronometre.timer-icon.ico";
+                    using (var stream = assembly.GetManifestResourceStream(resourceName))
                     {
-                        customIcon = new Icon(iconPath);
-                    }
-                    else
-                    {
-                        // Try in the project root directory
-                        var projectIconPath = Path.Combine(Directory.GetCurrentDirectory(), "timer-icon.ico");
-                        if (File.Exists(projectIconPath))
+                        if (stream != null)
                         {
-                            customIcon = new Icon(projectIconPath);
+                            customIcon = new Icon(stream);
+                            System.Diagnostics.Debug.WriteLine("Loaded icon from embedded resources");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    // Log the error but continue with system icon
-                    System.Diagnostics.Debug.WriteLine($"Failed to load custom icon: {ex.Message}");
+                    System.Diagnostics.Debug.WriteLine($"Failed to load embedded icon: {ex.Message}");
+                }
+
+                // Fallback to file system
+                if (customIcon == null)
+                {
+                    try
+                    {
+                        var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "timer-icon.ico");
+                        if (File.Exists(iconPath))
+                        {
+                            customIcon = new Icon(iconPath);
+                            System.Diagnostics.Debug.WriteLine("Loaded icon from file system");
+                        }
+                        else
+                        {
+                            // Try in the project root directory
+                            var projectIconPath = Path.Combine(Directory.GetCurrentDirectory(), "timer-icon.ico");
+                            if (File.Exists(projectIconPath))
+                            {
+                                customIcon = new Icon(projectIconPath);
+                                System.Diagnostics.Debug.WriteLine("Loaded icon from project directory");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Failed to load custom icon from file: {ex.Message}");
+                    }
                 }
 
                 _trayIcon = new NotifyIcon
@@ -393,6 +407,29 @@ namespace Chronometre
         private static void OnExitClicked(object? sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private static void ShowLogLocationNotification()
+        {
+            try
+            {
+                if (_logWriter?.LogFilePath != null)
+                {
+                    var logLocation = Path.GetDirectoryName(_logWriter.LogFilePath);
+                    var logFileName = Path.GetFileName(_logWriter.LogFilePath);
+                    
+                    _trayIcon?.ShowBalloonTip(
+                        3000, // 3 seconds
+                        "Chronomètre",
+                        $"Log file saved to: {logLocation}\\{logFileName}",
+                        ToolTipIcon.Info
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error showing log location notification: {ex.Message}");
+            }
         }
 
         // Hotkey event handlers

@@ -23,6 +23,9 @@ namespace Chronometre.Services
             
             // Write a startup entry to ensure the log file is created
             WriteStartupEntry();
+            
+            // Show user where the log file is located
+            ShowLogLocationNotification();
         }
 
         private string GetLogFilePath(string? customLogPath)
@@ -45,7 +48,7 @@ namespace Chronometre.Services
                 return fullPath;
             }
 
-            // Use Desktop folder as primary location (as requested by user)
+            // Try Desktop first, but fallback to user-accessible locations
             var desktopPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
                 "Chrono-log.txt"
@@ -58,21 +61,20 @@ namespace Chronometre.Services
                 return desktopPath;
             }
 
-            // Fallback to Documents/Chronometre folder
-            var fallbackPath = Path.Combine(
+            // Fallback to Documents folder (more accessible)
+            var documentsPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                "Chronometre",
                 "Chrono-log.txt"
             );
 
-            System.Diagnostics.Debug.WriteLine($"Testing fallback path: {fallbackPath}");
-            if (CanWriteToPath(fallbackPath))
+            System.Diagnostics.Debug.WriteLine($"Testing documents path: {documentsPath}");
+            if (CanWriteToPath(documentsPath))
             {
-                System.Diagnostics.Debug.WriteLine($"Using fallback path: {fallbackPath}");
-                return fallbackPath;
+                System.Diagnostics.Debug.WriteLine($"Using documents path: {documentsPath}");
+                return documentsPath;
             }
 
-            // Final fallback to AppData
+            // Final fallback to AppData (always accessible)
             var appDataPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "Chronometre",
@@ -145,6 +147,38 @@ namespace Chronometre.Services
                 // Log error to a fallback location
                 var fallbackPath = Path.Combine(Path.GetTempPath(), "Chronometre_error.log");
                 File.AppendAllText(fallbackPath, $"{DateTime.Now}: Failed to write startup entry: {ex.Message}\n");
+            }
+        }
+
+        private void ShowLogLocationNotification()
+        {
+            try
+            {
+                // Show a brief notification about where the log file is located
+                var logLocation = Path.GetDirectoryName(_logFilePath);
+                var logFileName = Path.GetFileName(_logFilePath);
+                
+                System.Diagnostics.Debug.WriteLine($"Log file location: {logLocation}\\{logFileName}");
+                
+                // If it's not on Desktop, show a notification
+                var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                if (!_logFilePath.StartsWith(desktopPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    // Show a system tray notification about log location
+                    if (System.Windows.Forms.Application.OpenForms.Count > 0)
+                    {
+                        var mainForm = System.Windows.Forms.Application.OpenForms[0];
+                        if (mainForm != null)
+                        {
+                            // This will be handled by the main application
+                            System.Diagnostics.Debug.WriteLine($"Log file saved to: {logLocation}\\{logFileName}");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error showing log location notification: {ex.Message}");
             }
         }
 

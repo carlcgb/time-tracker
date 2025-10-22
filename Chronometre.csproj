@@ -13,12 +13,10 @@
     <AssemblyCopyright>Copyright © 2025</AssemblyCopyright>
     <AssemblyVersion>1.1.0.0</AssemblyVersion>
     <FileVersion>1.1.0.0</FileVersion>
-    <PublishSingleFile>true</PublishSingleFile>
+    <PublishSingleFile>false</PublishSingleFile>
     <SelfContained>true</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishTrimmed>false</PublishTrimmed>
-    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <ApplicationIcon>timer-icon.ico</ApplicationIcon>
   </PropertyGroup>
 
@@ -31,6 +29,5 @@
   <ItemGroup>
     <EmbeddedResource Include="timer-icon.ico" />
   </ItemGroup>
-
 
 </Project>

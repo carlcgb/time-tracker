@@ -1,119 +1,175 @@
-# Release Notes - Version 1.1.0
+# Chronomètre v1.1.0 Release Notes
 
-## 🎯 Major Fixes
+## 🎉 What's New
 
-### ✅ Hotkey Persistence Fixed
-- **Issue**: Hotkeys only worked once, then stopped responding
-- **Solution**: Implemented new `GlobalHotkeyManager` using low-level keyboard hook
-- **Result**: Hotkeys now work continuously without interruption
+### ✨ Major Features
+- **Professional Windows Installer** - Easy installation with proper Windows integration
+- **System Tray Integration** - Minimal desktop footprint with full functionality
+- **Global Hotkeys** - Work from any application with reliable hotkey detection
+- **Automatic Logging** - Smart log file creation with fallback locations
+- **Visual Overlay** - Quick status display with auto-hide functionality
 
-### ✅ Logging Improvements
-- **Issue**: Log file not being created on Desktop as expected
-- **Solution**: Updated `LogWriter` to prioritize Desktop folder
-- **Result**: Log file now saves to `Desktop/Chrono-log.txt` as requested
+### 🔧 Technical Improvements
+- **Reliable Hotkey Manager** - Fixed "hotkeys only work once" issue
+- **Smart Logging System** - Automatic path selection (Desktop → Documents → AppData)
+- **Embedded Resources** - Icon and resources properly embedded in executable
+- **Error Handling** - Comprehensive error handling and user feedback
+- **Single Instance** - Prevents multiple instances from running
 
-## 🔧 Technical Improvements
+### 🚀 Installation & Distribution
+- **Windows Installer** - Professional installation with shortcuts and registry integration
+- **Uninstaller** - Clean removal with Add/Remove Programs integration
+- **Documentation** - Comprehensive installation and usage guides
+- **Release Package** - Ready-to-distribute installer package
 
-### New Global Hotkey System
-- **Architecture**: Replaced form-based hotkeys with system-level keyboard hook
-- **Reliability**: Uses `SetWindowsHookEx` for global key detection
-- **Debugging**: Enhanced logging with timestamps for troubleshooting
-- **Performance**: More efficient key detection without polling
+## 📋 Features
 
-### Code Cleanup
-- **Removed**: Unused hotkey implementations (`HotkeyManager`, `KeyboardHookManager`, etc.)
-- **Consolidated**: Single, reliable hotkey system
-- **Documentation**: Updated README with current architecture
+### Global Hotkeys
+- **Ctrl+Alt+F1** - Start Timer
+- **Ctrl+Alt+F2** - Stop Timer  
+- **Ctrl+Alt+F3** - Add Note
+- **Ctrl+Alt+F4** - Show Overlay
+- **Ctrl+Alt+F5** - Hide Overlay
 
-## 🚀 What's New
+### System Integration
+- **Desktop Shortcut** - Easy access from desktop
+- **Start Menu Integration** - Available in Windows Start Menu
+- **System Tray** - Minimal footprint with full functionality
+- **Add/Remove Programs** - Professional uninstallation
 
-### Enhanced Debugging
-- Timestamped debug messages for hotkey detection
-- Better error handling and recovery
-- Detailed logging of hotkey execution flow
+### Logging & Tracking
+- **Automatic Log Creation** - Smart path selection for log files
+- **Session Tracking** - Start/stop times with duration calculation
+- **Note Support** - Add notes during work sessions
+- **Visual Feedback** - Overlay display for current status
 
-### Improved User Experience
-- Hotkeys work reliably from any application
-- Log file appears on Desktop immediately
-- Better error messages and recovery
+## 🛠️ Technical Details
 
-## 📋 System Requirements
+### System Requirements
+- **Operating System**: Windows 10 or later
+- **.NET Runtime**: .NET 8.0 (included in installer)
+- **Architecture**: x64
+- **Memory**: 50MB RAM
+- **Disk Space**: 100MB
 
-- **OS**: Windows 10/11 (64-bit)
-- **Runtime**: .NET 8.0 (included in self-contained build)
-- **Size**: ~70MB (self-contained executable)
+### Installation
+- **Installer**: `install.bat` (requires administrator privileges)
+- **Uninstaller**: `uninstall.bat` or Add/Remove Programs
+- **Installation Path**: `C:\Program Files\Chronometre\`
+- **Log File**: Desktop (with fallback to Documents/AppData)
 
-## 🎮 Hotkeys (Unchanged)
+### File Structure
+```
+Chronometre-v1.1.0/
+├── Chronometre.exe          # Main application
+├── [.NET Dependencies]      # All required .NET libraries
+├── install.bat              # Windows installer
+├── install.ps1             # PowerShell installer script
+├── uninstall.bat            # Uninstaller
+├── INSTALLATION.md          # Installation guide
+├── README.md                # User documentation
+└── LICENSE                  # MIT License
+```
 
-| Hotkey | Action |
-|--------|--------|
-| `Ctrl+Alt+F1` | Start new session |
-| `Ctrl+Alt+F2` | Pause/Resume current session |
-| `Ctrl+Alt+F3` | Stop current session |
-| `Ctrl+Alt+F4` | Add note to current session |
-| `Ctrl+Alt+F5` | Peek overlay indicator |
+## 🔧 Bug Fixes
 
-## 🔍 Testing
+### Resolved Issues
+- **Hotkeys Only Work Once** - Fixed with reliable hotkey manager
+- **Application Crashes** - Resolved with proper error handling
+- **Icon Not Displaying** - Fixed with embedded resources
+- **Log File Permissions** - Smart path selection with fallbacks
+- **Portable Version Issues** - Replaced with professional installer
 
-### Verified Working
-- ✅ Hotkeys work multiple times in succession
-- ✅ Log file created on Desktop
-- ✅ Session logging with timestamps
-- ✅ Overlay indicator functionality
-- ✅ System tray integration
-- ✅ Single instance enforcement
+### Performance Improvements
+- **Faster Startup** - Optimized application initialization
+- **Lower Memory Usage** - Efficient resource management
+- **Reliable Hotkeys** - Improved hotkey detection and handling
+- **Better Error Handling** - Comprehensive error management
 
-### Test Scenarios
-1. **Hotkey Persistence**: Press `Ctrl+Alt+F1` multiple times - should work each time
-2. **Log File**: Check Desktop for `Chrono-log.txt` file
-3. **Session Flow**: Start → Pause → Resume → Stop → Add Note
-4. **Overlay**: Verify red/orange indicator appears and auto-hides
+## 📚 Documentation
+
+### User Guides
+- **README.md** - Complete user documentation
+- **INSTALLATION.md** - Detailed installation guide
+- **Release Notes** - This file with all changes
+
+### Developer Information
+- **Source Code** - Available on GitHub
+- **Build Instructions** - Included in repository
+- **Contributing** - Guidelines for contributions
+
+## 🚀 Getting Started
+
+### Quick Installation
+1. **Download** the release package
+2. **Extract** to a folder
+3. **Right-click** `install.bat` and select "Run as administrator"
+4. **Follow** the installation prompts
+5. **Launch** from desktop shortcut or Start Menu
+
+### First Use
+1. **Look for** the Chronomètre icon in the system tray
+2. **Right-click** for options or **left-click** to show interface
+3. **Press** `Ctrl+Alt+F1` to start your first timer session
+4. **Check** your Desktop for the `Chrono-log.txt` file
+
+## 🔄 Migration from Previous Versions
+
+### From v1.0.x
+- **Uninstall** previous version first
+- **Install** new version using the installer
+- **Settings** will be preserved in AppData
+- **Log files** will continue in the same location
+
+### From Portable Versions
+- **Remove** old portable files
+- **Install** using the new installer
+- **Log files** will be moved to Desktop (preferred location)
 
 ## 🐛 Known Issues
 
-- None identified in this release
+### Current Limitations
+- **Hotkey Conflicts** - Some applications may conflict with global hotkeys
+- **Antivirus Software** - May flag the application (add exception if needed)
+- **Windows Updates** - May require reinstallation after major Windows updates
 
-## 📈 Performance
+### Workarounds
+- **Hotkey Conflicts** - Try different hotkey combinations in source code
+- **Antivirus Issues** - Add Chronomètre to antivirus exceptions
+- **Update Issues** - Reinstall using the latest release
 
-- **Startup Time**: ~2-3 seconds (cold start)
-- **Memory Usage**: ~8-10MB typical
-- **CPU Usage**: Minimal when idle
-- **Hotkey Response**: <50ms detection time
+## 📞 Support
 
-## 🔄 Migration from v1.0.0
+### Getting Help
+- **GitHub Issues** - Report bugs and request features
+- **GitHub Discussions** - Ask questions and get help
+- **Email Support** - Contact support@dev-ntic.com
 
-### Automatic Migration
-- Settings are automatically preserved
-- Log files continue from previous version
-- No manual migration required
+### Troubleshooting
+- **Check Log Files** - Look for error messages in `Chrono-log.txt`
+- **Check System Tray** - Ensure the application is running
+- **Check Permissions** - Ensure proper file permissions
+- **Check .NET Runtime** - Ensure .NET 8.0 is installed
 
-### Breaking Changes
-- None - fully backward compatible
+## 🎯 Future Plans
 
-## 📝 Development Notes
+### Upcoming Features
+- **Custom Hotkeys** - User-configurable hotkey combinations
+- **Multiple Timers** - Support for multiple concurrent timers
+- **Export Options** - CSV/Excel export for log data
+- **Themes** - Customizable appearance options
+- **Cloud Sync** - Optional cloud synchronization
 
-### Architecture Changes
-```
-Old: Form-based RegisterHotKey → Hidden Form → Message Loop
-New: Global Keyboard Hook → Direct Key Detection → Callback Execution
-```
+### Technical Improvements
+- **Performance Optimization** - Further memory and CPU optimizations
+- **Enhanced Logging** - More detailed logging options
+- **Better Error Handling** - Improved error recovery
+- **Accessibility** - Better accessibility support
 
-### Key Files Modified
-- `Services/GlobalHotkeyManager.cs` (new)
-- `Services/LogWriter.cs` (updated)
-- `Program.cs` (updated)
-- `README.md` (updated)
+---
 
-### Removed Files
-- `Services/HotkeyManager.cs`
-- `Services/KeyboardHookManager.cs`
-- `Services/SimpleHotkeyManager.cs`
-- `Services/BasicHotkeyManager.cs`
-- Various documentation files
+**Chronomètre v1.1.0** - Simple, efficient time tracking for Windows developers and professionals.
 
-## 🎉 Summary
-
-This release focuses on **reliability and user experience**. The major hotkey persistence issue has been resolved, and logging now works as expected. The application is more robust and provides better debugging information for future development.
-
-**Download**: [Latest Release](../../releases/latest)
-**Source**: [GitHub Repository](../../)
+*Released: January 22, 2025*
+*Version: 1.1.0.0*
+*Build: Release*

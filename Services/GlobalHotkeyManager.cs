@@ -60,11 +60,23 @@ namespace Chronometre.Services
 
         private IntPtr SetHook(LowLevelKeyboardProc proc)
         {
-            using (var curProcess = System.Diagnostics.Process.GetCurrentProcess())
-            using (var curModule = curProcess.MainModule)
+            // Use the current assembly's module for the hook
+            var currentAssembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var moduleHandle = GetModuleHandle(currentAssembly.Location);
+            
+            if (moduleHandle == IntPtr.Zero)
             {
-                return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(curModule.ModuleName), 0);
+                // Fallback: use the current process module
+                using (var curProcess = System.Diagnostics.Process.GetCurrentProcess())
+                {
+                    if (curProcess.MainModule != null)
+                    {
+                        moduleHandle = GetModuleHandle(curProcess.MainModule.ModuleName);
+                    }
+                }
             }
+            
+            return SetWindowsHookEx(WH_KEYBOARD_LL, proc, moduleHandle, 0);
         }
 
         private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
