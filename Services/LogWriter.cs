@@ -18,6 +18,7 @@ namespace Chronometre.Services
         public LogWriter(string? customLogPath = null)
         {
             _logFilePath = GetLogFilePath(customLogPath);
+            System.Diagnostics.Debug.WriteLine($"LogWriter initialized with path: {_logFilePath}");
             EnsureLogDirectoryExists();
             
             // Write a startup entry to ensure the log file is created
@@ -28,11 +29,23 @@ namespace Chronometre.Services
         {
             if (!string.IsNullOrEmpty(customLogPath))
             {
-                System.Diagnostics.Debug.WriteLine($"Using custom log path: {customLogPath}");
-                return customLogPath;
+                // If custom path is provided, ensure it has the correct filename
+                var directory = Path.GetDirectoryName(customLogPath);
+                if (string.IsNullOrEmpty(directory))
+                {
+                    directory = customLogPath;
+                }
+                var fileName = Path.GetFileName(customLogPath);
+                if (string.IsNullOrEmpty(fileName) || !fileName.EndsWith(".txt"))
+                {
+                    fileName = "Chrono-log.txt";
+                }
+                var fullPath = Path.Combine(directory, fileName);
+                System.Diagnostics.Debug.WriteLine($"Using custom log path: {fullPath}");
+                return fullPath;
             }
 
-            // Use Desktop folder as primary location
+            // Use Desktop folder as primary location (as requested by user)
             var desktopPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
                 "Chrono-log.txt"
@@ -45,18 +58,18 @@ namespace Chronometre.Services
                 return desktopPath;
             }
 
-            // Fallback to Documents folder
-            var documentsPath = Path.Combine(
+            // Fallback to Documents/Chronometre folder
+            var fallbackPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 "Chronometre",
                 "Chrono-log.txt"
             );
 
-            System.Diagnostics.Debug.WriteLine($"Testing documents path: {documentsPath}");
-            if (CanWriteToPath(documentsPath))
+            System.Diagnostics.Debug.WriteLine($"Testing fallback path: {fallbackPath}");
+            if (CanWriteToPath(fallbackPath))
             {
-                System.Diagnostics.Debug.WriteLine($"Using documents path: {documentsPath}");
-                return documentsPath;
+                System.Diagnostics.Debug.WriteLine($"Using fallback path: {fallbackPath}");
+                return fallbackPath;
             }
 
             // Final fallback to AppData
@@ -105,7 +118,7 @@ namespace Chronometre.Services
                 // Create the log file if it doesn't exist
                 if (!File.Exists(_logFilePath))
                 {
-                    File.WriteAllText(_logFilePath, "# Chronomètre Time Tracker Log - Chrono-log.txt\n# Format: YYYY-MM-DD HH:mm:ss zzz    Duration=HH:mm:ss    DayTotal=HH:mm:ss    State=Stopped    Notes=\"...\"    AppVersion=X.Y.Z\n# All sessions are aggregated in this single file\n\n", Encoding.UTF8);
+                    File.WriteAllText(_logFilePath, "# Chronomètre Time Tracker Log - Chrono-log.txt\n# Format: Date\tStartTime\tEndTime\tDuration\tNotes\n# All sessions are aggregated in this single file\n\n", Encoding.UTF8);
                 }
             }
             catch (Exception ex)
@@ -120,11 +133,15 @@ namespace Chronometre.Services
         {
             try
             {
-                var startupEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss zzz}\tDuration=00:00:00\tDayTotal=00:00:00\tState=ApplicationStarted\tNotes=\"Chronomètre started\"\tAppVersion={GetApplicationVersion()}\n";
+                var now = DateTime.Now;
+                var startupEntry = $"{now:yyyy-MM-dd}\t{now:HH:mm:ss}\tN/A\t00:00:00\tApplication started\n";
+                System.Diagnostics.Debug.WriteLine($"Writing startup entry to: {_logFilePath}");
                 File.AppendAllText(_logFilePath, startupEntry);
+                System.Diagnostics.Debug.WriteLine("Startup entry written successfully");
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"Error writing startup entry: {ex.Message}");
                 // Log error to a fallback location
                 var fallbackPath = Path.Combine(Path.GetTempPath(), "Chronometre_error.log");
                 File.AppendAllText(fallbackPath, $"{DateTime.Now}: Failed to write startup entry: {ex.Message}\n");
@@ -154,14 +171,13 @@ namespace Chronometre.Services
 
         private string FormatLogLine(SessionData sessionData, TimeSpan dailyTotal)
         {
-            var timestamp = sessionData.StartTime.ToString("yyyy-MM-dd HH:mm:ss zzz", CultureInfo.InvariantCulture);
+            var date = sessionData.StartTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            var startTime = sessionData.StartTime.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
+            var endTime = sessionData.EndTime?.ToString("HH:mm:ss", CultureInfo.InvariantCulture) ?? "N/A";
             var duration = sessionData.Duration.ToString(@"hh\:mm\:ss", CultureInfo.InvariantCulture);
-            var dayTotal = dailyTotal.ToString(@"hh\:mm\:ss", CultureInfo.InvariantCulture);
-            var state = sessionData.FinalState.ToString();
             var notes = FormatNotes(sessionData.Notes);
-            var version = GetApplicationVersion();
 
-            return $"{timestamp}\tDuration={duration}\tDayTotal={dayTotal}\tState={state}\tNotes=\"{notes}\"\tAppVersion={version}";
+            return $"{date}\t{startTime}\t{endTime}\t{duration}\t{notes}";
         }
 
         private string FormatNotes(List<string> notes)

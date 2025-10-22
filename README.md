@@ -119,7 +119,7 @@ Chronometre/
 │   ├── OverlayIndicatorForm.cs  # Visual overlay
 │   └── StartDialog.cs       # Start session dialog
 ├── Services/                # Core services
-│   ├── HotkeyManager.cs     # Global hotkey handling
+│   ├── GlobalHotkeyManager.cs  # Global hotkey handling
 │   ├── LogWriter.cs         # Session logging
 │   ├── OverlayAutoHideController.cs  # Overlay management
 │   ├── Settings.cs          # Settings management
@@ -184,6 +184,13 @@ dotnet run
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Changelog
+
+### Version 1.1.0
+- **Fixed hotkey persistence** - Hotkeys now work continuously, not just once
+- **Improved global hotkey system** - Uses low-level keyboard hook for better reliability
+- **Enhanced logging** - Log file now saves to Desktop as requested
+- **Better error handling** - Improved debugging and error recovery
+- **Code cleanup** - Removed unused hotkey implementations
 
 ### Version 1.0.0
 - Initial release

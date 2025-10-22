@@ -13,7 +13,7 @@ namespace Chronometre
         private static Mutex? _mutex;
         private static NotifyIcon? _trayIcon;
         private static TimerService? _timerService;
-        private static HotkeyManager? _hotkeyManager;
+        private static GlobalHotkeyManager? _hotkeyManager;
         private static LogWriter? _logWriter;
         private static Settings? _settings;
         private static ApplicationContext? _applicationContext;
@@ -54,8 +54,18 @@ namespace Chronometre
 
             // Initialize services
             _timerService = new TimerService();
-            _logWriter = new LogWriter(_settings.LastUsedLogFolder);
-            _hotkeyManager = new HotkeyManager();
+            System.Diagnostics.Debug.WriteLine("Creating LogWriter...");
+            try
+            {
+                _logWriter = new LogWriter(); // Let LogWriter determine the best path
+                System.Diagnostics.Debug.WriteLine($"LogWriter created successfully. Path: {_logWriter.LogFilePath}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error creating LogWriter: {ex.Message}");
+                _logWriter = null;
+            }
+            _hotkeyManager = new GlobalHotkeyManager();
 
             // Initialize overlay
             _overlay = new OverlayIndicatorForm();
@@ -116,8 +126,15 @@ namespace Chronometre
 
                 _trayIcon.DoubleClick += OnTrayIconDoubleClick;
                 
+                // Force the icon to be visible
+                _trayIcon.Visible = true;
+                
                 // Show a notification that the app is running
                 _trayIcon.ShowBalloonTip(3000, "Chronomètre", "Time tracker is running in the system tray", ToolTipIcon.Info);
+                
+                // Additional attempt to ensure visibility
+                System.Threading.Thread.Sleep(100);
+                _trayIcon.Visible = true;
             }
             catch (Exception ex)
             {
@@ -192,7 +209,7 @@ namespace Chronometre
 
             menu.Items.Add(new ToolStripSeparator());
 
-            var openLogItem = new ToolStripMenuItem("Open Log Folder", null, OnOpenLogFolderClicked);
+            var openLogItem = new ToolStripMenuItem("Open Log File", null, OnOpenLogFolderClicked);
             menu.Items.Add(openLogItem);
 
             menu.Items.Add(new ToolStripSeparator());
@@ -207,39 +224,16 @@ namespace Chronometre
         {
             if (_hotkeyManager == null) return;
 
-            var failedHotkeys = new List<string>();
-            
-            // Try alternative hotkeys that are less likely to conflict with PowerToys
-            if (!_hotkeyManager.RegisterHotkey(Keys.Control | Keys.Alt | Keys.F1, OnStartHotkey))
-            {
-                failedHotkeys.Add("Start (Ctrl+Alt+F1)");
-            }
-            
-            if (!_hotkeyManager.RegisterHotkey(Keys.Control | Keys.Alt | Keys.F2, OnPauseHotkey))
-            {
-                failedHotkeys.Add("Pause/Resume (Ctrl+Alt+F2)");
-            }
-            
-            if (!_hotkeyManager.RegisterHotkey(Keys.Control | Keys.Alt | Keys.F3, OnStopHotkey))
-            {
-                failedHotkeys.Add("Stop (Ctrl+Alt+F3)");
-            }
-            
-            if (!_hotkeyManager.RegisterHotkey(Keys.Control | Keys.Alt | Keys.F4, OnAddNoteHotkey))
-            {
-                failedHotkeys.Add("Add Note (Ctrl+Alt+F4)");
-            }
-            
-            if (!_hotkeyManager.RegisterHotkey(Keys.Control | Keys.Alt | Keys.F5, OnPeekHotkey))
-            {
-                failedHotkeys.Add("Peek (Ctrl+Alt+F5)");
-            }
+            // Register hotkeys using the new keyboard hook system
+            _hotkeyManager.RegisterHotkey(Keys.Control | Keys.Alt | Keys.F1, OnStartHotkey);
+            _hotkeyManager.RegisterHotkey(Keys.Control | Keys.Alt | Keys.F2, OnPauseHotkey);
+            _hotkeyManager.RegisterHotkey(Keys.Control | Keys.Alt | Keys.F3, OnStopHotkey);
+            _hotkeyManager.RegisterHotkey(Keys.Control | Keys.Alt | Keys.F4, OnAddNoteHotkey);
+            _hotkeyManager.RegisterHotkey(Keys.Control | Keys.Alt | Keys.F5, OnPeekHotkey);
 
-            if (failedHotkeys.Count > 0)
-            {
-                _trayIcon?.ShowBalloonTip(5000, "Hotkey Registration Failed", 
-                    $"Some hotkeys could not be registered (possibly due to PowerToys or other software):\n{string.Join(", ", failedHotkeys)}", ToolTipIcon.Warning);
-            }
+            _trayIcon?.ShowBalloonTip(3000, "Hotkeys Registered", "Hotkeys registered! Try Ctrl+Alt+F1 to start.", ToolTipIcon.Info);
+            
+            System.Diagnostics.Debug.WriteLine("Hotkey registration completed using keyboard hook");
         }
 
         private static void OnTimerStateChanged(object? sender, TimerStateChangedEventArgs e)
@@ -336,7 +330,12 @@ namespace Chronometre
             _timerService?.Stop();
             if (_logWriter != null && _timerService != null)
             {
+                System.Diagnostics.Debug.WriteLine("Writing session to log");
                 _logWriter.WriteSession(_timerService.GetSessionData());
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"LogWriter or TimerService is null. LogWriter: {_logWriter != null}, TimerService: {_timerService != null}");
             }
         }
 
@@ -358,21 +357,35 @@ namespace Chronometre
 
             try
             {
-                var logFolder = System.IO.Path.GetDirectoryName(_logWriter.LogFilePath);
-                if (logFolder != null && System.IO.Directory.Exists(logFolder))
+                var logFilePath = _logWriter.LogFilePath;
+                if (System.IO.File.Exists(logFilePath))
                 {
-                    System.Diagnostics.Process.Start("explorer.exe", logFolder);
+                    // Open the log file directly with the default text editor
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = logFilePath,
+                        UseShellExecute = true
+                    });
                 }
                 else
                 {
-                    // Show the log file path to the user
-                    MessageBox.Show($"Log file location:\n{_logWriter.LogFilePath}\n\nIf the folder doesn't exist, it will be created when you start your first session.", 
-                        "Chronomètre Log Location", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // If file doesn't exist, open the folder containing it
+                    var logFolder = System.IO.Path.GetDirectoryName(logFilePath);
+                    if (logFolder != null && System.IO.Directory.Exists(logFolder))
+                    {
+                        System.Diagnostics.Process.Start("explorer.exe", logFolder);
+                    }
+                    else
+                    {
+                        // Show the log file path to the user
+                        MessageBox.Show($"Log file location:\n{logFilePath}\n\nIf the folder doesn't exist, it will be created when you start your first session.", 
+                            "Chronomètre Log Location", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Could not open log folder: {ex.Message}\n\nLog file location: {_logWriter.LogFilePath}", "Error", 
+                MessageBox.Show($"Could not open log file: {ex.Message}\n\nLog file location: {_logWriter.LogFilePath}", "Error", 
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -385,8 +398,12 @@ namespace Chronometre
         // Hotkey event handlers
         private static void OnStartHotkey()
         {
+            var timestamp = DateTime.Now.ToString("HH:mm:ss.fff");
+            System.Diagnostics.Debug.WriteLine($"[{timestamp}] === OnStartHotkey called ===");
+            
             if (Application.OpenForms.Count > 0)
             {
+                System.Diagnostics.Debug.WriteLine($"[{timestamp}] Forms open: {Application.OpenForms.Count}, bringing to front");
                 // Bring existing dialogs to front
                 var topForm = Application.OpenForms[Application.OpenForms.Count - 1];
                 topForm.BringToFront();
@@ -394,8 +411,10 @@ namespace Chronometre
             }
             else
             {
+                System.Diagnostics.Debug.WriteLine($"[{timestamp}] No forms open, calling OnStartClicked");
                 OnStartClicked(null, EventArgs.Empty);
             }
+            System.Diagnostics.Debug.WriteLine($"[{timestamp}] === OnStartHotkey completed ===");
         }
 
         private static void OnPauseHotkey()
