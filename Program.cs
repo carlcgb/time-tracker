@@ -438,36 +438,9 @@ namespace Chronometre
             var timestamp = DateTime.Now.ToString("HH:mm:ss.fff");
             System.Diagnostics.Debug.WriteLine($"[{timestamp}] === OnStartHotkey called ===");
             
-            if (Application.OpenForms.Count > 0)
-            {
-                System.Diagnostics.Debug.WriteLine($"[{timestamp}] Forms open: {Application.OpenForms.Count}, bringing to front");
-                // Bring existing dialogs to front
-                var topForm = Application.OpenForms[Application.OpenForms.Count - 1];
-                topForm.BringToFront();
-                topForm.Activate();
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine($"[{timestamp}] No forms open, showing start dialog");
-                // Show the start dialog for notes input when using hotkey
-                if (_timerService?.CurrentState == TimerState.Idle)
-                {
-                    using var dialog = new StartDialog();
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        _timerService.Start(dialog.Notes);
-                        System.Diagnostics.Debug.WriteLine($"[{timestamp}] Timer started via hotkey with notes: {dialog.Notes}");
-                    }
-                    else
-                    {
-                        System.Diagnostics.Debug.WriteLine($"[{timestamp}] Timer start cancelled by user");
-                    }
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine($"[{timestamp}] Timer not in idle state: {_timerService?.CurrentState}");
-                }
-            }
+            // Use the same method as the tray icon menu to ensure consistency
+            System.Diagnostics.Debug.WriteLine($"[{timestamp}] Calling OnStartClicked from hotkey");
+            OnStartClicked(null, EventArgs.Empty);
             System.Diagnostics.Debug.WriteLine($"[{timestamp}] === OnStartHotkey completed ===");
         }
 
