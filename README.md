@@ -2,7 +2,7 @@
 
 > **The ultimate time tracking solution for Windows developers and professionals**
 
-![Version](https://img.shields.io/badge/Version-1.1.0.0-blue?style=for-the-badge&logo=windows)
+![Version](https://img.shields.io/badge/Version-1.1.3.0-blue?style=for-the-badge&logo=windows)
 ![.NET](https://img.shields.io/badge/.NET-8.0-purple?style=for-the-badge&logo=dotnet)
 ![Platform](https://img.shields.io/badge/Platform-Windows-green?style=for-the-badge&logo=windows)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge&logo=opensourceinitiative)
@@ -33,29 +33,29 @@
 | Hotkey | Action |
 |--------|--------|
 | `Ctrl+Alt+F1` | Start Timer |
-| `Ctrl+Alt+F2` | Stop Timer |
-| `Ctrl+Alt+F3` | Add Note |
-| `Ctrl+Alt+F4` | Show Overlay |
-| `Ctrl+Alt+F5` | Hide Overlay |
+| `Ctrl+Alt+F2` | Pause/Resume Timer |
+| `Ctrl+Alt+F3` | Stop & Save Session |
+| `Ctrl+Alt+F4` | Add Note |
+| `Ctrl+Alt+F5` | Show/Hide Overlay |
 
-## 🎉 **Latest Release: v1.1.2**
+## 🎉 **Latest Release: v1.1.3**
 
-### 🆕 **What's New in v1.1.2**
-- ✅ **Fixed Duration Calculation** - Log now shows actual session time instead of 00:00:00
-- ✅ **Fixed Start Hotkey** - Ctrl+Alt+F1 now works continuously with notes dialog
-- ✅ **Fixed Overlay Hotkeys** - Ctrl+Alt+F4 and F5 now work properly when timer is active
-- ✅ **Session Summary Popup** - Confirmation dialog shows session details when timer stops
-- 📊 **Portable Executable** - Single-file distribution with embedded dependencies
+### 🆕 **What's New in v1.1.3**
+- 🐛 **Critical Logging Fix** - Resolved "Access denied" errors when writing to log file
+- 🔧 **Robust Path Detection** - Multi-method path resolution with write permission testing
+- 🛡️ **Enhanced Error Handling** - Comprehensive error recovery and debugging
+- 📁 **Automatic Directory Creation** - Creates required directories automatically
+- 🔄 **Fallback Mechanisms** - Graceful degradation to safe locations
+- 📊 **Improved Reliability** - Sessions now properly save to log file
+- 🎯 **Better User Experience** - No more logging failures or data loss
+- 🚀 **Portable Executable** - Single-file distribution with embedded dependencies
 - 📝 **Smart Logging** - Creates log file in same directory as executable
 - 🎯 **Reliable Hotkeys** - All hotkeys work consistently across applications
-- 🖼️ **Embedded Resources** - Icon and resources properly embedded
-- 🛡️ **Enhanced Error Handling** - Comprehensive error management and user feedback
-- 🚀 **Single Instance Protection** - Prevents multiple instances from running
 
 ### 📦 **Download & Install**
 
 #### **🚀 Portable Version (Recommended)**
-1. **Download** the latest release: `Chronometre-v1.1.2-Portable.zip`
+1. **Download** the latest release: `Chronometre-v1.1.3-Portable.zip`
 2. **Extract** the ZIP file to any folder
 3. **Run** `Chronometre.exe` directly
 4. **Log file** will be created automatically in the same folder
@@ -86,9 +86,10 @@
 ### Basic Workflow
 
 1. **Start Timer** - Press `Ctrl+Alt+F1` to begin tracking time
-2. **Add Notes** - Press `Ctrl+Alt+F3` to add notes during work
-3. **Stop Timer** - Press `Ctrl+Alt+F2` to stop tracking
-4. **View Logs** - Check `Chrono-log.txt` on your Desktop
+2. **Add Notes** - Press `Ctrl+Alt+F4` to add notes during work
+3. **Pause/Resume** - Press `Ctrl+Alt+F2` to pause or resume tracking
+4. **Stop & Save** - Press `Ctrl+Alt+F3` to stop and save session
+5. **View Logs** - Check `Chrono-log.txt` in the same directory as the executable
 
 ### System Tray
 
@@ -100,18 +101,24 @@
 
 ### Automatic Log Creation
 
-The application automatically creates log files in the following priority order:
+The application automatically creates log files using robust path detection:
 
-1. **Desktop** - `Chrono-log.txt` (preferred)
-2. **Documents** - `Chrono-log.txt` (fallback)
-3. **AppData** - `Chrono-log.txt` (final fallback)
+1. **Executable Directory** - `Chrono-log.txt` in same folder as executable (preferred)
+2. **Assembly Location** - Based on application location (fallback)
+3. **Current Directory** - Working directory (fallback)
+4. **Documents Folder** - `Chrono-log.txt` in Documents (final fallback)
+
+The application tests write permissions before using any path to ensure reliable logging.
 
 ### Log Format
 
 ```
-[2025-01-22 14:30:15] Session Started
-[2025-01-22 14:30:15] Note: Working on project documentation
-[2025-01-22 15:45:30] Session Ended - Duration: 01:15:15
+# Chronomètre Time Tracker Log - Chrono-log.txt
+# Format: Date	StartTime	EndTime	Duration	Notes
+# All sessions are aggregated in this single file
+
+2025-10-23	14:30:15	15:45:30	01:15:15	Working on project documentation
+2025-10-23	16:00:00	17:30:00	01:30:00	Code review and testing
 ```
 
 ## 🛠️ Configuration
