@@ -58,13 +58,13 @@ Sessions are automatically saved to `Chrono-log.txt`:
 - **Log not saving?** Ensure write permissions to the folder
 - **App won't start?** Check .NET 8.0 is installed (included in portable version)
 
-**Need more help?** Check the [User Guide](USER_GUIDE.md) for detailed instructions.
+**Need more help?** Check the [User Guide](docs/USER_GUIDE.md) for detailed instructions.
 
 ## 📚 Documentation
 
-- **[User Guide](USER_GUIDE.md)** - Detailed usage instructions
-- **[Release Notes](RELEASE_NOTES_v1.1.3.md)** - What's new in v1.1.3
-- **[Development Guide](DEVELOPMENT.md)** - Building from source
+- **[User Guide](docs/USER_GUIDE.md)** - Detailed usage instructions
+- **[Release Notes](docs/RELEASE_NOTES_v1.1.3.md)** - What's new in v1.1.3
+- **[Development Guide](docs/DEVELOPMENT.md)** - Building from source
 
 ## 🏗️ Development
 
