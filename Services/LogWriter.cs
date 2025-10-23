@@ -48,12 +48,96 @@ namespace Chronometre.Services
                 return fullPath;
             }
 
-            // Create log file in the same directory as the executable
-            var executableDirectory = AppContext.BaseDirectory;
-            var logPath = Path.Combine(executableDirectory, "Chrono-log.txt");
+            // Try multiple methods to find the executable directory
+            string executableDirectory;
             
-            System.Diagnostics.Debug.WriteLine($"Using executable directory path: {logPath}");
-            return logPath;
+            // Method 1: Use AppContext.BaseDirectory
+            try
+            {
+                executableDirectory = AppContext.BaseDirectory;
+                if (!string.IsNullOrEmpty(executableDirectory) && Directory.Exists(executableDirectory))
+                {
+                    // Test if we can write to this directory
+                    var testPath = Path.Combine(executableDirectory, "test_write.tmp");
+                    try
+                    {
+                        File.WriteAllText(testPath, "test");
+                        File.Delete(testPath);
+                        System.Diagnostics.Debug.WriteLine($"Using AppContext.BaseDirectory: {executableDirectory}");
+                        var logPath = Path.Combine(executableDirectory, "Chrono-log.txt");
+                        return logPath;
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Cannot write to AppContext.BaseDirectory {executableDirectory}: {ex.Message}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"AppContext.BaseDirectory failed: {ex.Message}");
+            }
+
+            // Method 2: Use Assembly.GetExecutingAssembly().Location
+            try
+            {
+                var assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                executableDirectory = Path.GetDirectoryName(assemblyLocation) ?? string.Empty;
+                if (!string.IsNullOrEmpty(executableDirectory) && Directory.Exists(executableDirectory))
+                {
+                    // Test if we can write to this directory
+                    var testPath = Path.Combine(executableDirectory, "test_write.tmp");
+                    try
+                    {
+                        File.WriteAllText(testPath, "test");
+                        File.Delete(testPath);
+                        System.Diagnostics.Debug.WriteLine($"Using Assembly location directory: {executableDirectory}");
+                        var logPath = Path.Combine(executableDirectory, "Chrono-log.txt");
+                        return logPath;
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Cannot write to Assembly location {executableDirectory}: {ex.Message}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Assembly location failed: {ex.Message}");
+            }
+
+            // Method 3: Use Environment.CurrentDirectory
+            try
+            {
+                executableDirectory = Environment.CurrentDirectory;
+                if (!string.IsNullOrEmpty(executableDirectory) && Directory.Exists(executableDirectory))
+                {
+                    // Test if we can write to this directory
+                    var testPath = Path.Combine(executableDirectory, "test_write.tmp");
+                    try
+                    {
+                        File.WriteAllText(testPath, "test");
+                        File.Delete(testPath);
+                        System.Diagnostics.Debug.WriteLine($"Using CurrentDirectory: {executableDirectory}");
+                        var logPath = Path.Combine(executableDirectory, "Chrono-log.txt");
+                        return logPath;
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Cannot write to CurrentDirectory {executableDirectory}: {ex.Message}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"CurrentDirectory failed: {ex.Message}");
+            }
+
+            // Fallback: Use Documents folder
+            var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var fallbackPath = Path.Combine(documentsPath, "Chronometre");
+            System.Diagnostics.Debug.WriteLine($"Using fallback path: {fallbackPath}");
+            return Path.Combine(fallbackPath, "Chrono-log.txt");
         }
 
         private bool CanWriteToPath(string path)
@@ -322,22 +406,37 @@ namespace Chronometre.Services
             const int maxRetries = 3;
             var retryDelay = TimeSpan.FromMilliseconds(100);
 
+            System.Diagnostics.Debug.WriteLine($"Attempting to write to log file: {_logFilePath}");
+            System.Diagnostics.Debug.WriteLine($"Log line to write: {logLine}");
+
             for (int attempt = 0; attempt < maxRetries; attempt++)
             {
                 try
                 {
+                    // Ensure directory exists before writing
+                    var directory = Path.GetDirectoryName(_logFilePath);
+                    if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+                    {
+                        Directory.CreateDirectory(directory);
+                        System.Diagnostics.Debug.WriteLine($"Created directory: {directory}");
+                    }
+
                     File.AppendAllText(_logFilePath, logLine + Environment.NewLine, Encoding.UTF8);
+                    System.Diagnostics.Debug.WriteLine($"Successfully wrote to log file on attempt {attempt + 1}");
                     return;
                 }
                 catch (Exception ex) when (attempt < maxRetries - 1)
                 {
+                    System.Diagnostics.Debug.WriteLine($"Write attempt {attempt + 1} failed: {ex.Message}. Retrying in {retryDelay.TotalMilliseconds}ms...");
                     System.Threading.Thread.Sleep(retryDelay);
                     retryDelay = TimeSpan.FromMilliseconds(retryDelay.TotalMilliseconds * 2);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // If all retries fail, we can't do much about it
-                    // In a real application, you might want to show a user notification
+                    // If all retries fail, log the error and throw
+                    System.Diagnostics.Debug.WriteLine($"All write attempts failed. Final error: {ex.Message}");
+                    var fallbackPath = Path.Combine(Path.GetTempPath(), "Chronometre_error.log");
+                    File.AppendAllText(fallbackPath, $"{DateTime.Now}: Failed to write session to {_logFilePath}: {ex.Message}\n");
                     throw;
                 }
             }
